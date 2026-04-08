@@ -8,7 +8,7 @@ get_header();
 while ( have_posts() ) :
 	the_post();
 	$post_id        = get_the_ID();
-	$hauptzutaten   = sanitize_text_field( (string) get_post_meta( $post_id, 'igw_spk_hauptzutaten', true ) );
+	$excerpt        = igw_spk_get_item_excerpt_text( $post_id );
 	$portionsgroess = sanitize_text_field( (string) get_post_meta( $post_id, 'igw_spk_portionsgroesse', true ) );
 	$prices         = igw_spk_get_item_price_output( $post_id );
 	$ingredient_ids = igw_spk_get_item_ingredient_ids( $post_id );
@@ -38,8 +38,8 @@ while ( have_posts() ) :
 
 			<h1 class="igw-spk-single__title"><?php the_title(); ?></h1>
 
-			<?php if ( '' !== $hauptzutaten ) : ?>
-				<div class="igw-spk-single__field"><?php echo esc_html( $hauptzutaten ); ?></div>
+			<?php if ( '' !== $excerpt ) : ?>
+				<div class="igw-spk-single__field"><?php echo esc_html( $excerpt ); ?></div>
 			<?php endif; ?>
 
 			<?php if ( ! empty( $labels ) ) : ?>

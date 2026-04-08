@@ -154,3 +154,12 @@ function igw_spk_is_publicly_visible_item( $post_id ) {
 
 	return 0 !== (int) get_post_meta( $post_id, 'igw_spk_aktive', true );
 }
+
+function igw_spk_get_item_excerpt_text( $post_id ) {
+	$excerpt = get_the_excerpt( $post_id );
+	if ( ! is_string( $excerpt ) ) {
+		return '';
+	}
+
+	return trim( wp_strip_all_tags( $excerpt ) );
+}

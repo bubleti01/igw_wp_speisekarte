@@ -36,7 +36,7 @@ class IGW_SPK_Templates {
 			return;
 		}
 
-		if ( ! is_post_type_archive( 'igw_wp_speisekarte' ) ) {
+		if ( ! $query->is_post_type_archive( 'igw_wp_speisekarte' ) ) {
 			return;
 		}
 
