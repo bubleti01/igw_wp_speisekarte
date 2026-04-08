@@ -1,0 +1,26 @@
+allergen|1|glutenhaltiges Getreide
+allergen|2|Krebstiere
+allergen|3|Eier
+allergen|4|Fisch
+allergen|5|Erdnüsse
+allergen|6|Soja
+allergen|7|Milch / Laktose
+allergen|8|Schalenfrüchte
+allergen|9|Sellerie
+allergen|10|Senf
+allergen|11|Sesam
+allergen|12|Schwefeldioxid / Sulfite
+allergen|13|Lupinen
+allergen|14|Weichtiere
+zusatzstoff|a|mit Farbstoff
+zusatzstoff|b|mit Konservierungsstoff / konserviert
+zusatzstoff|c|mit Antioxidationsmittel
+zusatzstoff|d|mit Geschmacksverstärker
+zusatzstoff|e|geschwefelt
+zusatzstoff|f|geschwärzt
+zusatzstoff|g|gewachst
+zusatzstoff|h|mit Phosphat
+zusatzstoff|i|mit Süßungsmittel(n)
+zusatzstoff|j|enthält eine Phenylalaninquelle
+zusatzstoff|k|kann bei übermäßigem Verzehr abführend wirken
+zusatzstoff|l|mit Nitritpökelsalz / mit Nitrat / mit Nitritpökelsalz und Nitrat

@@ -1,0 +1,13 @@
+.igw-spk-variante-row {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.igw-spk-ingredient-list {
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
