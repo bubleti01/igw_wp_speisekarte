@@ -64,7 +64,7 @@ class IGW_SPK_CPT {
 				'menu_position'      => 21,
 				'menu_icon'          => 'dashicons-excerpt-view',
 				'hierarchical'       => false,
-				'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'author', 'revisions', 'page-attributes' ),
+				'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'author', 'revisions', 'page-attributes', 'custom-fields' ),
 				'taxonomies'         => array( 'category', 'post_tag' ),
 			)
 		);
@@ -86,7 +86,7 @@ class IGW_SPK_CPT {
 				'menu_icon'          => 'dashicons-drumstick',
 				'has_archive'        => false,
 				'rewrite'            => false,
-				'supports'           => array( 'title' ),
+				'supports'           => array( 'title', 'custom-fields' ),
 			)
 		);
 	}

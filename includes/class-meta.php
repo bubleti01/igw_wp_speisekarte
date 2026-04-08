@@ -11,6 +11,7 @@ class IGW_SPK_Meta {
 		add_action( 'init', array( __CLASS__, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'save_post' ), 10, 3 );
+		add_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'validate_required_category' ), 20, 3 );
 		add_action( 'save_post_igw_spk_zutat', array( __CLASS__, 'save_zutat_meta' ) );
 	}
 
@@ -38,6 +39,19 @@ class IGW_SPK_Meta {
 				$common,
 				array(
 					'type'              => 'array',
+					'show_in_rest'      => array(
+						'schema' => array(
+							'type'  => 'array',
+							'items' => array(
+								'type'                 => 'object',
+								'properties'           => array(
+									'label' => array( 'type' => 'string' ),
+									'preis' => array( 'type' => 'string' ),
+								),
+								'additionalProperties' => false,
+							),
+						),
+					),
 					'sanitize_callback' => array( __CLASS__, 'sanitize_varianten' ),
 				)
 			)
@@ -49,6 +63,14 @@ class IGW_SPK_Meta {
 				$common,
 				array(
 					'type'              => 'array',
+					'show_in_rest'      => array(
+						'schema' => array(
+							'type'  => 'array',
+							'items' => array(
+								'type' => 'string',
+							),
+						),
+					),
 					'sanitize_callback' => array( __CLASS__, 'sanitize_string_array' ),
 				)
 			)
@@ -60,6 +82,14 @@ class IGW_SPK_Meta {
 				$common,
 				array(
 					'type'              => 'array',
+					'show_in_rest'      => array(
+						'schema' => array(
+							'type'  => 'array',
+							'items' => array(
+								'type' => 'integer',
+							),
+						),
+					),
 					'sanitize_callback' => array( __CLASS__, 'sanitize_int_array' ),
 				)
 			)
@@ -172,17 +202,34 @@ class IGW_SPK_Meta {
 		update_post_meta( $post_id, 'igw_spk_varianten', self::sanitize_varianten( wp_unslash( $_POST['igw_spk_varianten'] ?? array() ) ) );
 		update_post_meta( $post_id, 'igw_spk_ernaehrungslabel', self::sanitize_string_array( wp_unslash( $_POST['igw_spk_ernaehrungslabel'] ?? array() ) ) );
 		update_post_meta( $post_id, 'igw_spk_zutaten_ids', self::sanitize_int_array( wp_unslash( $_POST['igw_spk_zutaten_ids'] ?? array() ) ) );
+	}
+
+	public static function validate_required_category( $post_id, $post, $update ) {
+		static $is_validating = false;
+
+		if ( $is_validating || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		if ( 'igw_wp_speisekarte' !== $post->post_type || 'auto-draft' === $post->post_status || 'trash' === $post->post_status ) {
+			return;
+		}
 
 		$categories = wp_get_post_terms( $post_id, 'category', array( 'fields' => 'ids' ) );
-		if ( empty( $categories ) ) {
-			remove_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'save_post' ), 10 );
-			wp_update_post(
-				array(
-					'ID'          => $post_id,
-					'post_status' => 'draft',
-				)
-			);
-			add_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'save_post' ), 10, 3 );
+		if ( ! empty( $categories ) ) {
+			return;
+		}
+
+		$is_validating = true;
+		wp_update_post(
+			array(
+				'ID'          => $post_id,
+				'post_status' => 'draft',
+			)
+		);
+		$is_validating = false;
+
+		if ( get_current_user_id() > 0 ) {
 			set_transient( 'igw_spk_category_required_' . get_current_user_id(), 1, 60 );
 		}
 	}
