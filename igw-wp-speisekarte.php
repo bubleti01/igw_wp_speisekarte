@@ -30,7 +30,6 @@ require_once IGW_SPK_PLUGIN_PATH . 'includes/class-admin.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-seed.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-render.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-shortcodes.php';
-require_once IGW_SPK_PLUGIN_PATH . 'includes/class-block.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-templates.php';
 
 function igw_spk_load_textdomain() {
@@ -43,7 +42,6 @@ function igw_spk_bootstrap() {
 	IGW_SPK_Meta::init();
 	IGW_SPK_Admin::init();
 	IGW_SPK_Shortcodes::init();
-	IGW_SPK_Block::init();
 	IGW_SPK_Templates::init();
 }
 add_action( 'plugins_loaded', 'igw_spk_bootstrap', 20 );
