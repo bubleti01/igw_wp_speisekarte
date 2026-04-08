@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'IGW_SPK_PLUGIN_FILE', __FILE__ );
 define( 'IGW_SPK_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'IGW_SPK_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'IGW_SPK_VERSION', '1.0.8' );
 
 require_once IGW_SPK_PLUGIN_PATH . 'includes/helpers.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-cpt.php';
@@ -47,12 +48,12 @@ function igw_spk_bootstrap() {
 add_action( 'plugins_loaded', 'igw_spk_bootstrap', 20 );
 
 function igw_spk_enqueue_assets() {
-	wp_enqueue_style( 'igw-spk-frontend', IGW_SPK_PLUGIN_URL . 'assets/css/frontend.css', array(), '1.0.0' );
+	wp_enqueue_style( 'igw-spk-frontend', IGW_SPK_PLUGIN_URL . 'assets/css/frontend.css', array(), IGW_SPK_VERSION );
 }
 add_action( 'wp_enqueue_scripts', 'igw_spk_enqueue_assets' );
 
 function igw_spk_admin_assets() {
-	wp_enqueue_style( 'igw-spk-admin', IGW_SPK_PLUGIN_URL . 'assets/css/admin.css', array(), '1.0.0' );
+	wp_enqueue_style( 'igw-spk-admin', IGW_SPK_PLUGIN_URL . 'assets/css/admin.css', array(), IGW_SPK_VERSION );
 }
 add_action( 'admin_enqueue_scripts', 'igw_spk_admin_assets' );
 
