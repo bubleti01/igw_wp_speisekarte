@@ -105,3 +105,52 @@ function igw_spk_get_aggregated_markings( $post_id ) {
 		'zusatzstoffe' => $zusatzstoff_codes,
 	);
 }
+
+function igw_spk_get_active_visibility_meta_clause() {
+	return array(
+		'relation' => 'OR',
+		array(
+			'key'     => 'igw_spk_aktive',
+			'value'   => 1,
+			'compare' => '=',
+			'type'    => 'NUMERIC',
+		),
+		array(
+			'key'     => 'igw_spk_aktive',
+			'compare' => 'NOT EXISTS',
+		),
+	);
+}
+
+function igw_spk_add_active_visibility_to_query_args( $query_args ) {
+	$meta_query = array();
+	if ( isset( $query_args['meta_query'] ) && is_array( $query_args['meta_query'] ) ) {
+		$meta_query = $query_args['meta_query'];
+	}
+
+	if ( empty( $meta_query ) ) {
+		$query_args['meta_query'] = array( igw_spk_get_active_visibility_meta_clause() );
+		return $query_args;
+	}
+
+	$relation = 'AND';
+	if ( isset( $meta_query['relation'] ) ) {
+		$relation = strtoupper( (string) $meta_query['relation'] );
+		unset( $meta_query['relation'] );
+	}
+
+	$meta_query = array_values( $meta_query );
+	$meta_query[] = igw_spk_get_active_visibility_meta_clause();
+	$meta_query   = array_merge( array( 'relation' => $relation ), $meta_query );
+
+	$query_args['meta_query'] = $meta_query;
+	return $query_args;
+}
+
+function igw_spk_is_publicly_visible_item( $post_id ) {
+	if ( ! metadata_exists( 'post', $post_id, 'igw_spk_aktive' ) ) {
+		return true;
+	}
+
+	return 0 !== (int) get_post_meta( $post_id, 'igw_spk_aktive', true );
+}

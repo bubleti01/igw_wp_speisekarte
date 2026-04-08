@@ -17,10 +17,6 @@ class IGW_SPK_Render {
 						'key'   => 'igw_spk_home',
 						'value' => 1,
 					),
-					array(
-						'key'   => 'igw_spk_aktive',
-						'value' => 1,
-					),
 				),
 				'orderby'        => array(
 					'menu_order' => 'ASC',
@@ -28,6 +24,7 @@ class IGW_SPK_Render {
 				),
 			)
 		);
+		$query_args = igw_spk_add_active_visibility_to_query_args( $query_args );
 
 		return self::render_items( $query_args, 'home' );
 	}
@@ -55,12 +52,6 @@ class IGW_SPK_Render {
 			'post_type'      => 'igw_wp_speisekarte',
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'   => 'igw_spk_aktive',
-					'value' => 1,
-				),
-			),
 			'tax_query'      => array(
 				array(
 					'taxonomy' => 'category',
@@ -73,6 +64,7 @@ class IGW_SPK_Render {
 				'title'      => 'ASC',
 			),
 		);
+		$query_args = igw_spk_add_active_visibility_to_query_args( $query_args );
 
 		return self::render_items( $query_args, 'abschnitt' );
 	}
