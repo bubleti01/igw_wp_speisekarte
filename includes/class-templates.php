@@ -40,7 +40,7 @@ class IGW_SPK_Templates {
 			return;
 		}
 
-		$query->set( 'orderby', array( 'menu_order' => 'ASC', 'title' => 'ASC' ) );
+		$query->set( 'orderby', 'menu_order title' );
 		$query->set( 'order', 'ASC' );
 	}
 
