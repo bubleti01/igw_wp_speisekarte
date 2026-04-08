@@ -21,10 +21,14 @@
 wp-config.php
 
 # Example themes
-/wp-content/themes/twenty*/
+/wp-content/themes/astra/
 
 # Example plugin
-/wp-content/plugins/hello.php
+/wp-content/plugins/seo-by-rank-math/
+/wp-content/plugins/seo-by-rank-math-pro/
+/wp-content/plugins/ultimate-addons-for-gutenberg/
+/wp-content/plugins/post-to-google-my-business
+/wp-content/plugins/social-media-auto-publish
 
 # Uploads
 /wp-content/uploads/
