@@ -3,7 +3,7 @@
  * Plugin Name: IGW WP Speisekarte
  * Plugin URI: https://igo2web.com/de/wordpress-plugins-von-igw-design/wp-speisekarte/
  * Description: Verwalte Speisen inkl. Zutaten, Allergenen und Zusatzstoffen mit dynamischem Shortcodes.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author: IGW Design
