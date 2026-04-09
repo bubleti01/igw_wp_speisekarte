@@ -2,17 +2,17 @@
 /**
  * Plugin Name: IGW WP Speisekarte
  * Plugin URI: https://igo2web.com/de/wordpress-plugins-von-igw-design/wp-speisekarte/
- * Description: Verwalte Speisen inkl. Zutaten, Allergenen und Zusatzstoffen mit dynamischem Shortcodes.
- * Version: 1.0.8
+ * Description: Verwalte Speisen mit Zutaten, Allergenen und Zusatzstoffen und gib sie per Shortcode flexibel aus.
+ * Version: 1.0.9
  * Requires at least: 6.6
- * Requires PHP:      8.1
+ * Requires PHP: 8.1
  * Author: IGW Design
  * Author URI: https://igo2web.com
- * License:           GPL v3 or later
- * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+ * License: GPL v3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: igw_wp_speisekarte
  * Domain Path: /languages
- * Update URI:        https://igo2web.com/de/wordpress-plugins-von-igw-design/wp-speisekarte/
+ * Update URI: https://igo2web.com/de/wordpress-plugins-von-igw-design/wp-speisekarte/
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'IGW_SPK_PLUGIN_FILE', __FILE__ );
 define( 'IGW_SPK_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'IGW_SPK_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'IGW_SPK_VERSION', '1.0.8' );
+define( 'IGW_SPK_VERSION', '1.0.9' );
 
 require_once IGW_SPK_PLUGIN_PATH . 'includes/helpers.php';
 require_once IGW_SPK_PLUGIN_PATH . 'includes/class-cpt.php';
