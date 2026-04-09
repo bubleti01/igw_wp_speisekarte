@@ -11,3 +11,25 @@
   border: 1px solid #ddd;
   padding: 8px;
 }
+
+.igw-spk-home-toggle {
+  min-width: 74px;
+  font-weight: 600;
+}
+
+.igw-spk-home-toggle.is-on {
+  background: #2271b1;
+  border-color: #2271b1;
+  color: #fff;
+}
+
+.igw-spk-home-toggle.is-off {
+  background: #f6f7f7;
+  border-color: #8c8f94;
+  color: #1d2327;
+}
+
+.igw-spk-home-toggle.is-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}

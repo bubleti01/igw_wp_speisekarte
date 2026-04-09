@@ -61,7 +61,7 @@ while ( have_posts() ) :
 			<?php endif; ?>
 
 			<?php if ( ! empty( $ingredient_names ) ) : ?>
-				<div class="igw-spk-single__field"><strong><?php esc_html_e( 'Auswahl', 'igw_wp_speisekarte' ); ?>:</strong> <?php echo esc_html( implode( ', ', $ingredient_names ) ); ?></div>
+				<div class="igw-spk-single__field"><?php echo esc_html( implode( ', ', $ingredient_names ) ); ?></div>
 			<?php endif; ?>
 
 			<div class="igw-spk-single__field">
