@@ -8,6 +8,7 @@ class IGW_SPK_Templates {
 		add_filter( 'template_include', array( __CLASS__, 'template_include' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_public_queries' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'order_archive_query' ) );
+		add_filter( 'the_posts', array( __CLASS__, 'filter_mixed_query_posts' ), 10, 2 );
 		add_action( 'template_redirect', array( __CLASS__, 'handle_inactive_single_as_404' ) );
 	}
 
@@ -20,15 +21,41 @@ class IGW_SPK_Templates {
 			return;
 		}
 
-		if ( ! self::query_targets_speisekarte( $query ) ) {
+		if ( self::is_pure_speisekarte_query( $query ) ) {
+			$query_args = array(
+				'meta_query' => $query->get( 'meta_query' ),
+			);
+			$query_args = igw_spk_add_active_visibility_to_query_args( $query_args );
+			$query->set( 'meta_query', $query_args['meta_query'] );
 			return;
 		}
 
-		$query_args = array(
-			'meta_query' => $query->get( 'meta_query' ),
+		if ( self::is_mixed_speisekarte_query( $query ) ) {
+			$query->set( 'igw_spk_filter_inactive', 1 );
+		}
+	}
+
+	public static function filter_mixed_query_posts( $posts, $query ) {
+		if ( is_admin() || ! $query->is_main_query() || ! $query->get( 'igw_spk_filter_inactive' ) ) {
+			return $posts;
+		}
+
+		if ( empty( $posts ) || ! is_array( $posts ) ) {
+			return $posts;
+		}
+
+		return array_values(
+			array_filter(
+				$posts,
+				static function ( $post ) {
+					if ( ! isset( $post->post_type ) || 'igw_wp_speisekarte' !== $post->post_type ) {
+						return true;
+					}
+
+					return igw_spk_is_publicly_visible_item( $post->ID );
+				}
+			)
 		);
-		$query_args = igw_spk_add_active_visibility_to_query_args( $query_args );
-		$query->set( 'meta_query', $query_args['meta_query'] );
 	}
 
 	public static function order_archive_query( $query ) {
@@ -87,6 +114,32 @@ class IGW_SPK_Templates {
 		}
 
 		return false;
+	}
+
+	private static function is_pure_speisekarte_query( $query ) {
+		if ( $query->is_post_type_archive( 'igw_wp_speisekarte' ) ) {
+			return true;
+		}
+
+		$post_type = $query->get( 'post_type' );
+		if ( 'igw_wp_speisekarte' === $post_type ) {
+			return true;
+		}
+
+		if ( is_array( $post_type ) ) {
+			$post_types = array_values( array_unique( array_filter( array_map( 'strval', $post_type ) ) ) );
+			return 1 === count( $post_types ) && 'igw_wp_speisekarte' === $post_types[0];
+		}
+
+		return false;
+	}
+
+	private static function is_mixed_speisekarte_query( $query ) {
+		if ( ! self::query_targets_speisekarte( $query ) || self::is_pure_speisekarte_query( $query ) ) {
+			return false;
+		}
+
+		return $query->is_search() || $query->is_category() || $query->is_tag() || $query->is_tax();
 	}
 
 	public static function template_include( $template ) {
