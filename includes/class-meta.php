@@ -11,7 +11,7 @@ class IGW_SPK_Meta {
 		add_action( 'init', array( __CLASS__, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'save_post' ), 10, 3 );
-		add_action( 'save_post_igw_wp_speisekarte', array( __CLASS__, 'validate_required_category' ), 20, 3 );
+		add_action( 'wp_after_insert_post', array( __CLASS__, 'validate_required_category' ), 20, 4 );
 		add_action( 'save_post_igw_spk_zutat', array( __CLASS__, 'save_zutat_meta' ) );
 	}
 
@@ -204,10 +204,10 @@ class IGW_SPK_Meta {
 		update_post_meta( $post_id, 'igw_spk_zutaten_ids', self::sanitize_int_array( wp_unslash( $_POST['igw_spk_zutaten_ids'] ?? array() ) ) );
 	}
 
-	public static function validate_required_category( $post_id, $post, $update ) {
+	public static function validate_required_category( $post_id, $post, $update, $post_before ) {
 		static $is_validating = false;
 
-		if ( $is_validating || wp_is_post_revision( $post_id ) ) {
+		if ( $is_validating || wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
 
