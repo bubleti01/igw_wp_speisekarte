@@ -12,6 +12,7 @@ class IGW_SPK_Admin {
 		add_action( 'pre_get_posts', array( __CLASS__, 'handle_column_sorting' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_list_assets' ) );
 		add_action( 'wp_ajax_igw_spk_toggle_home', array( __CLASS__, 'ajax_toggle_home' ) );
+		add_action( 'wp_ajax_igw_spk_save_basispreis', array( __CLASS__, 'ajax_save_basispreis' ) );
 	}
 
 	public static function maybe_category_notice() {
@@ -37,10 +38,29 @@ class IGW_SPK_Admin {
 	}
 
 	public static function render_admin_columns( $column, $post_id ) {
-		switch ( $column ) {
+			switch ( $column ) {
 			case 'preis':
-				$preise = igw_spk_get_item_price_output( $post_id );
-				echo esc_html( $preise ? $preise[0] : '—' );
+				$varianten = get_post_meta( $post_id, 'igw_spk_varianten', true );
+				if ( self::has_usable_variants( $varianten ) ) {
+					$preise = igw_spk_get_item_price_output( $post_id );
+					if ( ! empty( $preise ) ) {
+						foreach ( $preise as $preis_line ) {
+							echo '<div class="igw-spk-preis-line">' . esc_html( $preis_line ) . '</div>';
+						}
+					} else {
+						echo '—';
+					}
+					echo '<div class="igw-spk-preis-hint">' . esc_html__( 'Varianten vorhanden – Preis über Bearbeiten ändern', 'igw_wp_speisekarte' ) . '</div>';
+					break;
+				}
+
+				$basispreis = (string) get_post_meta( $post_id, 'igw_spk_preis_basis', true );
+				$display    = '' !== trim( $basispreis ) ? $basispreis : '—';
+				echo '<div class="igw-spk-preis-inline" data-post-id="' . esc_attr( (string) $post_id ) . '">';
+				echo '<input type="text" class="igw-spk-preis-input" value="' . esc_attr( $basispreis ) . '" />';
+				echo '<button type="button" class="button button-small igw-spk-preis-save">' . esc_html__( 'Speichern', 'igw_wp_speisekarte' ) . '</button>';
+				echo '<div class="igw-spk-preis-display">' . esc_html( $display ) . '</div>';
+				echo '</div>';
 				break;
 			case 'menu_order':
 				echo esc_html( (string) get_post_field( 'menu_order', $post_id ) );
@@ -103,7 +123,8 @@ class IGW_SPK_Admin {
 			'igw-spk-admin-list',
 			'igwSpkAdminList',
 			array(
-				'nonce' => wp_create_nonce( 'igw_spk_toggle_home' ),
+				'homeNonce'  => wp_create_nonce( 'igw_spk_toggle_home' ),
+				'priceNonce' => wp_create_nonce( 'igw_spk_save_basispreis' ),
 			)
 		);
 	}
@@ -135,5 +156,54 @@ class IGW_SPK_Admin {
 				'label' => $target ? 'ON' : 'OFF',
 			)
 		);
+	}
+
+	public static function ajax_save_basispreis() {
+		check_ajax_referer( 'igw_spk_save_basispreis', 'nonce' );
+
+		$post_id = absint( $_POST['post_id'] ?? 0 );
+		if ( ! $post_id ) {
+			wp_send_json_error( array( 'message' => __( 'Ungültiger Beitrag.', 'igw_wp_speisekarte' ) ), 400 );
+		}
+
+		if ( 'igw_wp_speisekarte' !== get_post_type( $post_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Ungültiger Beitragstyp.', 'igw_wp_speisekarte' ) ), 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Keine Berechtigung.', 'igw_wp_speisekarte' ) ), 403 );
+		}
+
+		$varianten = get_post_meta( $post_id, 'igw_spk_varianten', true );
+		if ( self::has_usable_variants( $varianten ) ) {
+			wp_send_json_error( array( 'message' => __( 'Varianten vorhanden – Preis über Bearbeiten ändern', 'igw_wp_speisekarte' ) ), 400 );
+		}
+
+		$raw_price       = wp_unslash( $_POST['value'] ?? '' );
+		$sanitized_price = igw_spk_sanitize_price( $raw_price );
+		update_post_meta( $post_id, 'igw_spk_preis_basis', $sanitized_price );
+
+		wp_send_json_success(
+			array(
+				'value' => $sanitized_price,
+				'label' => '' !== trim( $sanitized_price ) ? $sanitized_price : '—',
+			)
+		);
+	}
+
+	private static function has_usable_variants( $varianten ) {
+		if ( ! is_array( $varianten ) ) {
+			return false;
+		}
+
+		foreach ( $varianten as $variante ) {
+			$label = sanitize_text_field( $variante['label'] ?? '' );
+			$preis = sanitize_text_field( $variante['preis'] ?? '' );
+			if ( '' !== $label || '' !== $preis ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
