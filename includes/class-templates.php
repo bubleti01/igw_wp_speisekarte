@@ -8,7 +8,7 @@ class IGW_SPK_Templates {
 		add_filter( 'template_include', array( __CLASS__, 'template_include' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_public_queries' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'order_archive_query' ) );
-		add_filter( 'the_posts', array( __CLASS__, 'filter_mixed_query_posts' ), 10, 2 );
+		add_filter( 'posts_where', array( __CLASS__, 'filter_mixed_query_where' ), 10, 2 );
 		add_action( 'template_redirect', array( __CLASS__, 'handle_inactive_single_as_404' ) );
 	}
 
@@ -35,27 +35,25 @@ class IGW_SPK_Templates {
 		}
 	}
 
-	public static function filter_mixed_query_posts( $posts, $query ) {
+	public static function filter_mixed_query_where( $where, $query ) {
 		if ( is_admin() || ! $query->is_main_query() || ! $query->get( 'igw_spk_filter_inactive' ) ) {
-			return $posts;
+			return $where;
 		}
 
-		if ( empty( $posts ) || ! is_array( $posts ) ) {
-			return $posts;
-		}
+		global $wpdb;
 
-		return array_values(
-			array_filter(
-				$posts,
-				static function ( $post ) {
-					if ( ! isset( $post->post_type ) || 'igw_wp_speisekarte' !== $post->post_type ) {
-						return true;
-					}
-
-					return igw_spk_is_publicly_visible_item( $post->ID );
-				}
-			)
+		$where .= $wpdb->prepare(
+			" AND ( {$wpdb->posts}.post_type != %s OR NOT EXISTS (
+				SELECT 1
+				FROM {$wpdb->postmeta} igw_spk_active_meta
+				WHERE igw_spk_active_meta.post_id = {$wpdb->posts}.ID
+				AND igw_spk_active_meta.meta_key = 'igw_spk_aktive'
+				AND igw_spk_active_meta.meta_value = '0'
+			) )",
+			'igw_wp_speisekarte'
 		);
+
+		return $where;
 	}
 
 	public static function order_archive_query( $query ) {
