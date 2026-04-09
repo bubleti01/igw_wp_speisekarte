@@ -39,41 +39,4 @@ jQuery( function ( $ ) {
 		} );
 	} );
 
-	$( document ).on( 'click', '.igw-spk-preis-save', function () {
-		var $button = $( this );
-		var $wrapper = $button.closest( '.igw-spk-preis-inline' );
-		var $input = $wrapper.find( '.igw-spk-preis-input' );
-		var $display = $wrapper.find( '.igw-spk-preis-display' );
-		var postId = parseInt( $wrapper.data( 'post-id' ), 10 );
-		var currentDisplay = $display.text();
-
-		if ( $button.prop( 'disabled' ) ) {
-			return;
-		}
-
-		$button.prop( 'disabled', true );
-		$input.prop( 'disabled', true );
-
-		$.post( ajaxurl, {
-			action: 'igw_spk_save_basispreis',
-			nonce: igwSpkAdminList.priceNonce,
-			post_id: postId,
-			value: $input.val()
-		} ).done( function ( response ) {
-			if ( response && response.success && response.data ) {
-				$input.val( response.data.value || '' );
-				$display.text( response.data.label || '—' );
-				return;
-			}
-
-			$display.text( currentDisplay );
-			alert( 'Preis konnte nicht gespeichert werden.' );
-		} ).fail( function () {
-			$display.text( currentDisplay );
-			alert( 'Preis konnte nicht gespeichert werden.' );
-		} ).always( function () {
-			$button.prop( 'disabled', false );
-			$input.prop( 'disabled', false );
-		} );
-	} );
 } );
