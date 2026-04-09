@@ -93,9 +93,9 @@ class IGW_SPK_Render {
 			echo '</div>';
 			echo '<div class="igw-spk-item__content">';
 			echo '<h3 class="igw-spk-item__title">' . esc_html( get_the_title() ) . '</h3>';
-			$excerpt = igw_spk_get_item_excerpt_text( $post_id );
-			if ( '' !== $excerpt ) {
-				echo '<div class="igw-spk-item__excerpt">' . esc_html( $excerpt ) . '</div>';
+			$hauptzutaten = sanitize_text_field( (string) get_post_meta( $post_id, 'igw_spk_hauptzutaten', true ) );
+			if ( '' !== $hauptzutaten ) {
+				echo '<div class="igw-spk-item__excerpt">' . esc_html( $hauptzutaten ) . '</div>';
 			}
 			echo '</div>';
 			echo '<div class="igw-spk-item__price">';

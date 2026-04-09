@@ -31,9 +31,9 @@ get_header();
 							<h2 class="igw-spk-item__title">
 								<a href="<?php echo esc_url( get_permalink() ); ?>"><?php the_title(); ?></a>
 							</h2>
-							<?php $excerpt = igw_spk_get_item_excerpt_text( $post_id ); ?>
-						<?php if ( '' !== $excerpt ) : ?>
-							<div class="igw-spk-item__excerpt"><?php echo esc_html( $excerpt ); ?></div>
+							<?php $hauptzutaten = sanitize_text_field( (string) get_post_meta( $post_id, 'igw_spk_hauptzutaten', true ) ); ?>
+						<?php if ( '' !== $hauptzutaten ) : ?>
+							<div class="igw-spk-item__excerpt"><?php echo esc_html( $hauptzutaten ); ?></div>
 						<?php endif; ?>
 						</div>
 
